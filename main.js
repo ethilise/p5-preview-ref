@@ -12,26 +12,35 @@ const createWindow = () => {
         backgroundColor: '#000',
         nodeIntegration: false,
         webSecurity: false,
-        devTools: false,
+        devTools: true,
     })
 
+
     const viewOne = new BrowserView({
-        webPreferences: {}
+        //webPreferences: { preload: path.join(app.getAppPath(), 'preload.js') }
     })
 
     win.addBrowserView(viewOne)
-    viewOne.setBounds({ x: 0, y: 0, width: 1024, height: 800 })
+    viewOne.setBounds({ x: 0, y: 0, width: 1024, height: 900 })
     viewOne.webContents.loadURL('http://localhost:8080/')
-    // viewOne.webContents.openDevTools()
+    
+    async function syncDevTools() {
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        viewOne.webContents.openDevTools({ mode: 'bottom' })
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        viewOne.webContents.loadURL('http://localhost:8080/')
+        viewOne.webContents.reload()
+    }
+
+    syncDevTools()
 
     const viewTwo = new BrowserView({
         webPreferences: {}
     })
 
     win.addBrowserView(viewTwo)
-    viewTwo.setBounds({ x: 0, y: 810, width: 1024, height: 800 })
+    viewTwo.setBounds({ x: 0, y: 905, width: 1024, height: 800 })
     viewTwo.webContents.loadURL('file:///p5-reference/index.html')
-    // viewTwo.webContents.openDevTools()
 }
 
 app.whenReady().then(() => {
